@@ -3,33 +3,33 @@ import 'package:json_annotation/json_annotation.dart';
 part 'app_models.g.dart';
 
 
-//class Base {
-//  bool Status;
-//  String Message;
-//  bool is_loading;
-//
-//  Base({this.Status, this.Message, this.is_loading});
-//
-//  Base buildError(int Errcode, {String message}) {
-//    var _h = Base()
-//      ..Status = false
-//      ..is_loading = false;
-//    switch (Errcode) {
-//      case 0:
-//      //Failed to connect server Error Details:
-//        return _h..Message = 'Something went Wrong';
-//      case 1:
-//        return _h..Message = 'Check your internet connection';
-//      case 2:
-//        return _h..Message = 'Row and Columns of the seats are not equal';
-//      default:
-//        return _h..Message = 'HTTP: Status Code ${Errcode}';
-//    }
-//  }
-//}
+class Base {
+  int status;
+  String Message;
+  bool is_loading;
+
+  Base({this.status, this.Message, this.is_loading});
+
+  Base buildError(int Errcode, {String message}) {
+    var _h = Base()
+      ..status = 500
+      ..is_loading = false;
+    switch (Errcode) {
+      case 0:
+      //Failed to connect server Error Details:
+        return _h..Message = 'Something went Wrong';
+      case 1:
+        return _h..Message = 'Check your internet connection';
+      case 2:
+        return _h..Message = 'Row and Columns of the seats are not equal';
+      default:
+        return _h..Message = 'HTTP: Status Code ${Errcode}';
+    }
+  }
+}
 
 @JsonSerializable()
-class CategrotyModel {
+class CategrotyModel extends Base {
   List<CategrotyData> data;
   bool ApiStatus;
   String Message;
@@ -47,6 +47,15 @@ class CategrotyModel {
   factory CategrotyModel.fromJson(Map<String, dynamic> json) =>
       _$CategrotyModelFromJson(json);
 
+  static CategrotyModel buildErr(int Errcode, {String message}) {
+    CategrotyModel res_d = CategrotyModel();
+    Base _b = res_d.buildError(Errcode, message: message);
+    return res_d
+      ..Message = _b.Message
+      ..status = _b.status
+      ..is_loading = _b.is_loading;
+  }
+
 }
 
 @JsonSerializable()
@@ -58,8 +67,8 @@ class CategrotyData {
   String ListImage;
   String DescriptionImage;
   String WeightIdentifier;
-  int Cost;
-  int Stock;
+  double Cost;
+  double Stock;
   bool Display;
 
   CategrotyData({
@@ -80,74 +89,49 @@ class CategrotyData {
 }
 
 @JsonSerializable()
-class OrderDetailsModel {
+class HomePageModel extends Base {
   int status;
-  bool is_loading = false;
-  List<OrderDetailsData> data;
+  HomePageModelData data;
+  bool is_loading;
+  String Message;
 
-  OrderDetailsModel({this.status, this.data, this.is_loading});
+  HomePageModel({this.status, this.data, this.is_loading, this.Message});
 
-  factory OrderDetailsModel.fromJson(Map<String, dynamic> json) =>
-      _$OrderDetailsModelFromJson(json);
+  factory HomePageModel.fromJson(Map<String, dynamic> json) =>
+      _$HomePageModelFromJson(json);
 
-}
-
-@JsonSerializable()
-class OrderDetailsData {
-  @JsonKey(name: "_id")
-  String id;
-  List<OrderCartData> Cart;
-  String Name;
-  String PhoneNumber;
-  String Address;
-  String PinCode;
-  String DateTime;
-  double TotalPrice;
-  double Delivery;
-
-  OrderDetailsData({
-      this.Cart,
-      this.id,
-      this.Name,
-      this.PhoneNumber,
-      this.Address,
-      this.PinCode,
-      this.DateTime,
-      this.TotalPrice,
-      this.Delivery});
-
-  factory OrderDetailsData.fromJson(Map<String, dynamic> json) =>
-      _$OrderDetailsDataFromJson(json);
+  static HomePageModel buildErr(int Errcode, {String message}) {
+    HomePageModel res_d = HomePageModel();
+    Base _b = res_d.buildError(Errcode, message: message);
+    return res_d
+      ..Message = _b.Message
+      ..status = _b.status
+      ..is_loading = _b.is_loading;
+  }
 
 }
 
 @JsonSerializable()
-class OrderCartData {
-  String img;
-  String VegName;
-  String Quantity;
-  String Weight;
-  String Category;
-  double TotalPrice;
-  double Cost;
-  int stock;
-  String ProductId;
-  bool Display;
+class HomePageModelData {
+  String PincodeList;
+  String StartTime;
+  String EndTime;
+  String ContactUsInfo;
+  String EnterpriseName;
+  double MinimumCost;
+  double DeliveryCharges;
 
-  OrderCartData({
-      this.img,
-      this.VegName,
-      this.Quantity,
-      this.Weight,
-      this.Category,
-      this.TotalPrice,
-      this.Cost,
-      this.stock,
-      this.ProductId,
-      this.Display});
+  HomePageModelData({
+    
+      this.PincodeList,
+      this.StartTime,
+      this.EndTime,
+      this.ContactUsInfo,
+      this.EnterpriseName,
+      this.MinimumCost,
+      this.DeliveryCharges});
 
-  factory OrderCartData.fromJson(Map<String, dynamic> json) =>
-      _$OrderCartDataFromJson(json);
+  factory HomePageModelData.fromJson(Map<String, dynamic> json) =>
+      _$HomePageModelDataFromJson(json);
 
 }
-

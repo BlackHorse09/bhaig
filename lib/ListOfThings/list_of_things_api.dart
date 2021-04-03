@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:bhaig/Utils/app_models.dart';
 import 'package:bhaig/Utils/connection_helper.dart';
+import 'package:bhaig/Utils/constants.dart';
 
 class GetListAPI {
   ConnectionHelper mCH;
@@ -11,11 +12,14 @@ class GetListAPI {
   }
 
 
-  Future<CategrotyModel> GetListItemsFromAPI() async {
+  Future<CategrotyModel> GetListItemsFromAPI(int index, bool status) async {
 
     CategrotyModel res_d;
 
     bool con = await mCH.checkConnection();
+
+    var res;
+
     if (con) {
       try {
 
@@ -24,7 +28,14 @@ class GetListAPI {
           "Accept": "application/json"
         };
 
-        final res = await http.get("https://trial-demo-app-heroku.herokuapp.com/getVegetables", headers: HEADERS);
+        if(index == 1) {
+          res = await http.get("${BASEURL}getVegetables", headers: HEADERS);
+        }
+         else if(index == 2) {
+          res = await http.get("${BASEURL}getFruits", headers: HEADERS);
+        } else if(index == 3) {
+          res = await http.get("${BASEURL}getNamkeens", headers: HEADERS);
+        }
 
         switch (res.statusCode) {
           case 200:
@@ -32,18 +43,17 @@ class GetListAPI {
             print('Res ---> ${res.body}');
             res_d = CategrotyModel.fromJson(j_data);
             print(res_d);
+            res_d.ApiStatus = status;
             return res_d;
           default:
-            return res_d;
+            return CategrotyModel.buildErr(res.statusCode, message: "Something went Wrong");
         }
       } catch (err) {
-        return res_d;
-        //return CategrotyModel.buildErr(0,message: "Something went wrong. Please try again later.");
+
+        return CategrotyModel.buildErr(0,message: "Something went wrong. Please try again later.");
       }
     } else {
-      return res_d;
-
-      //return CategrotyModel.buildErr(1);
+      return CategrotyModel.buildErr(1, message: "Check your internet connection");
     }
   }
 
